@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="dict.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Your Personal Dictionary</title>
+</head>
+<body>
+    <div class="card">
+        <div class="search">
+            <input type="text" placeholder="enter your word"
+            spellcheck="false">
+            <button><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+        <div class="meaning">
+            <h2 class="word">Hello</h2>
+            <p class="definition1">A person with an extraordinary intellect or skill that is markedly superior to his or her peers.</p>
+            <p class="partOfSpeech">Noun</p>
+            <button><i class="fa-solid fa-volume-low"></i></button>
+        </div>
+    </div>
+    <script>
+        const URL="https://api.dictionaryapi.dev/api/v2/entries/en/";
+               
+        const searchBttn=document.querySelector(".search button");  
+        const searchBoxx=document.querySelector(".search input"); 
+        const speakBtn=document.querySelector(".meaning button");
+
+            
+
+        async function checkMeaning(word){
+           const mean=await fetch(URL+ word);
+           
+           const data=await mean.json();
+           document.querySelector(".word").innerHTML="Word : "+data[0].word;
+           document.querySelector(".definition1").innerHTML="definition : " + data[0].meanings[0].definitions[0].definition;
+           document.querySelector(".partOfSpeech").innerHTML="partOfSpeech : " + data[0].meanings[0].partOfSpeech;
+           console.log(data);
+           document.querySelector(".meaning").style.display="block";
+
+           const audioURL = data[0].phonetics.find(p => p.audio)?.audio;
+
+           if (audioURL) {
+           speakBtn.style.display = "inline"; // Show the speaker button
+           speakBtn.onclick = () => speakWord(audioURL);
+            } else {
+           speakBtn.style.display = "none"; // Hide it if no audio available
+           }
+    }
+
+    function speakWord(url) {
+            const audio = new Audio(url);
+            audio.play();
+          
+        }
+        
+        
+        searchBttn.addEventListener("click", ()=>{
+            checkMeaning(searchBoxx.value);
+        })
+
+        </script>
+</body>
+</html>
